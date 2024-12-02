@@ -11,11 +11,7 @@ import (
 
 func main() {
 	filename := "input.txt"
-	data, err := os.ReadFile(filename)
-	if err != nil {
-		fmt.Println("Error reading file:", err)
-		return
-	}
+	data, _ := os.ReadFile(filename)
 
 	lines := strings.Split(string(data), "\n")
 
@@ -45,7 +41,6 @@ func main() {
 		}
 
 		similarityScore += col0[idxCol0] * occur
-
 	}
 
 	fmt.Printf("  Total distance is : %0.f\n", totalDistance)
