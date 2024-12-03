@@ -49,10 +49,9 @@ func validate(report string) bool {
 	isIncreasing := levels[0] < levels[1]
 	for l := 0; l < len(levels)-1; l++ {
 
-		step := levels[l] - levels[l+1]
-		if step < -3 || step > 3 {
+		steps := levels[l] - levels[l+1]
+		if steps < -3 || steps > 3 {
 			return false
-
 		}
 
 		if levels[l] == levels[l+1] {
@@ -62,12 +61,10 @@ func validate(report string) bool {
 		if isIncreasing {
 			if levels[l] > levels[l+1] {
 				return false
-
 			}
 		} else {
 			if levels[l] < levels[l+1] {
 				return false
-
 			}
 		}
 	}
