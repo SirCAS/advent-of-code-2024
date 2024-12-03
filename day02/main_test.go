@@ -27,6 +27,11 @@ var validateWithProblemDampenerTests = []validateTest{
 	{"1 3 6 7 9", true},
 	{"59 57 54 57 59 62", false},
 	{"6 7 10 13 14 15 17 19", true},
+	{"84 83 83 86 83", false},
+	{"30 27 27 30 30", false},
+	{"36 35 36 38 41 43 47 53", false},
+	{"36 35 36 38 41 43 47 50", false},
+	{"62 62 65 66 68 69 71 75", false},
 }
 
 func TestValidate(t *testing.T) {
