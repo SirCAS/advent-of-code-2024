@@ -2,8 +2,7 @@ package main
 
 import (
 	"fmt"
-	"math"
-	"os"
+		"os"
 	"strconv"
 	"strings"
 )
@@ -28,22 +27,21 @@ func main() {
 
 		isSafe := true
 		isIncreasing := data[r][0] < data[r][1]
-		for l := 0; l < len(levels)-2; l++ {
-			delta1 := math.Abs(float64(data[r][l]) - float64(data[r][l+1]))
-			delta2 := math.Abs(float64(data[r][l+1]) - float64(data[r][l+2]))
-
-			if !(0 < delta1 && delta1 < 4) || !(0 < delta2 && delta2 < 4) {
+		for l := 0; l < len(levels)-1; l++ {
+			
+			step := data[r][l] - data[r][l+1]
+			if step < -3 || step > 3 {
 				isSafe = false
 				continue
 			}
 
 			if isIncreasing {
-				if !(data[r][l] < data[r][l+1] && data[r][l+1] < data[r][l+2]) {
+				if !(data[r][l] < data[r][l+1]) {
 					isSafe = false
 					continue
 				}
 			} else {
-				if !(data[r][l] > data[r][l+1] && data[r][l+1] > data[r][l+2]) {
+				if !(data[r][l] > data[r][l+1]) {
 					isSafe = false
 					continue
 				}
