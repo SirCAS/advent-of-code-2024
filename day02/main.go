@@ -36,12 +36,12 @@ func main() {
 			}
 
 			if isIncreasing {
-				if !(data[r][l] < data[r][l+1]) {
+				if data[r][l] > data[r][l+1] {
 					isSafe = false
 					continue
 				}
 			} else {
-				if !(data[r][l] > data[r][l+1]) {
+				if data[r][l] < data[r][l+1] {
 					isSafe = false
 					continue
 				}
