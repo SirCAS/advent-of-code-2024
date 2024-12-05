@@ -22,18 +22,39 @@ func main() {
 	rules := parseRules(string(inputRules))
 	pages := parsePages(string(inputPages))
 
-	middlepageNumberSum := 0
+	middlepageNumberValidSum := 0
+	middlepageNumberFixedSum := 0
 
 	for _, page := range pages {
 
 		if validateUpdate(page, rules) {
 
-			middlepageNumberSum += findMiddlepageNumber(page)
+			middlepageNumberValidSum += findMiddlepageNumber(page)
+		} else {
+			fixed := fixUpdate(page, rules)
+			middlepageNumberFixedSum += findMiddlepageNumber(fixed)
 		}
 	}
 
-	fmt.Printf("The sum of valid middlepage nubmers are: %d", middlepageNumberSum)
+	fmt.Printf("The sum of valid middlepage nubmers are: %d\n", middlepageNumberValidSum)
+	fmt.Printf("The sum of fixed middlepage nubmers are: %d\n", middlepageNumberFixedSum)
 
+}
+
+func fixUpdate(page []int, rules []sortRule) []int {
+	for j := 0; j < len(rules); j++ {
+
+		before := slices.Index(page, rules[j].before)
+		after := slices.Index(page, rules[j].after)
+
+		if before != -1 && after != -1 && before > after {
+			// Swap
+			page[before], page[after] = page[after], page[before]
+			j = 0
+		}
+	}
+
+	return page
 }
 
 func validateUpdate(page []int, rules []sortRule) bool {
