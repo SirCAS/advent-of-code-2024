@@ -4,23 +4,21 @@ import (
 	"fmt"
 	"os"
 	"slices"
+	"strings"
 )
 
 func main() {
-	inputRules, error := os.ReadFile("input-rules-real.txt")
+	input, error := os.ReadFile("input.txt")
 	if error != nil {
 		fmt.Println(error)
 		os.Exit(-1)
 	}
 
-	inputPages, error := os.ReadFile("input-pages-real.txt")
-	if error != nil {
-		fmt.Println(error)
-		os.Exit(-1)
-	}
+	// input file is in two sections divided by two new-line chars
+	inputParts := strings.Split(string(input), "\n\n")
 
-	rules := parseRules(string(inputRules))
-	pages := parsePages(string(inputPages))
+	rules := parseRules(inputParts[0]) // first is rules in file
+	pages := parsePages(inputParts[1]) // .. then follows pages
 
 	middlepageNumberValidSum := 0
 	middlepageNumberFixedSum := 0
@@ -48,7 +46,7 @@ func fixUpdate(page []int, rules []sortRule) []int {
 		after := slices.Index(page, rules[j].after)
 
 		if before != -1 && after != -1 && before > after {
-			// Swap
+			// Swap numbers then try again
 			page[before], page[after] = page[after], page[before]
 			j = 0
 		}
