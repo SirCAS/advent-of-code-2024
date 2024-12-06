@@ -6,25 +6,6 @@ import (
 	"strings"
 )
 
-// type Direction int
-
-// const (
-// 	Up Direction = iota
-// 	Down
-// 	Left
-// 	Right
-// )
-
-// type coordinate struct {
-// 	x int
-// 	y int
-// }
-
-// func (c *coordinate) move(d Direction) int {
-
-// 	return r.width * r.height
-// }
-
 func main() {
 	input, error := os.ReadFile("input.txt")
 	if error != nil {
@@ -32,66 +13,29 @@ func main() {
 		os.Exit(-1)
 	}
 
-	data := strings.Split(string(input), "\n")
+	data := GuardMap{data: strings.Split(string(input), "\n")}
+	width, height := data.getSize()
 
-	guardX, guardY := getGuardCoordiates(data)
-
-	height := len(data) - 1
-	width := len(data[0]) - 1
-
-	var pos []coordinate
+	uniquePos := map[Coordinate]bool{}
 
 	direction := Up
+	guard := data.getGuardPosition()
 
-	for !(0 >= guardY || guardY >= height || 0 >= guardX || guardX >= width) {
+	for guard.isWithinBoundary(height, width) {
 
-		// take step
-		if direction == Up {
-			if string(data[guardY-1][guardX]) != "#" {
-				guardY--
-			} else {
-				direction = Right
-			}
-		} else if direction == Down {
-			if string(data[guardY+1][guardX]) != "#" {
-				guardY++
-			} else {
-				direction = Left
-			}
-		} else if direction == Left {
-			if string(data[guardY][guardX-1]) != "#" {
-				guardX--
-			} else {
-				direction = Up
-			}
-		} else if direction == Right {
-			if string(data[guardY][guardX+1]) != "#" {
-				guardX++
-			} else {
-				direction = Down
-			}
+		newPos := guard.move(direction)
+		if !newPos.isWithinBoundary(height, width) {
+			break
 		}
-		pos = append(pos, coordinate{x: guardX, y: guardY})
-		fmt.Printf("x: %d, y: %d\n", guardX, guardY)
-	}
 
-	fmt.Printf("Visisted %d positions", len(pos))
-
-	unique := map[coordinate]bool{}
-	for _, v := range pos {
-		unique[v] = true
-	}
-
-	fmt.Printf("Visisted %d uniqe positions", len(unique))
-
-}
-
-func getGuardCoordiates(data []string) (int, int) {
-	for y, line := range data {
-		idx := strings.Index(line, "^")
-		if idx != -1 {
-			return idx, y
+		if data.isObstacle(newPos) {
+			direction = (direction + 1) % 4
+		} else {
+			guard = newPos
+			uniquePos[newPos] = true
 		}
 	}
-	return 0, 0
+
+	fmt.Printf("Visited %d unique positions", len(uniquePos))
+
 }
