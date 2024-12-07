@@ -8,25 +8,33 @@ import (
 	"strings"
 )
 
-type Equation struct {
-	result  int
-	numbers []int
-}
-
-func parseEquation(eq string) Equation {
-	result := Equation{}
-
-	parts := strings.Split(eq, ": ")
-	result.result, _ = strconv.Atoi(parts[0])
-
-	numers := strings.Split(parts[1], " ")
-
-	for _, i := range numers {
-		c, _ := strconv.Atoi(i)
-		result.numbers = append(result.numbers, c)
+func main() {
+	input, error := os.ReadFile("input.txt")
+	if error != nil {
+		fmt.Println(error)
+		os.Exit(-1)
 	}
 
-	return result
+	part1, part2 := 0, 0
+
+	for _, line := range strings.Split(string(input), "\n") {
+
+		eq := parseEquation(line)
+
+		solutions1 := findSolutions(eq.numbers[0], eq.numbers[1:], []Operator{Add, Multiply})
+		if slices.Contains(solutions1, eq.result) {
+			part1 += eq.result
+		}
+
+		solutions2 := findSolutions(eq.numbers[0], eq.numbers[1:], []Operator{Add, Multiply, Concat})
+		if slices.Contains(solutions2, eq.result) {
+			part2 += eq.result
+		}
+	}
+
+	fmt.Printf("Sum of possible equations using Add, Multiply are %d\n", part1)
+	fmt.Printf("Sum of possible equations using Add, Multiply, Concat are %d\n", part2)
+
 }
 
 type Operator int
@@ -34,48 +42,28 @@ type Operator int
 const (
 	Add Operator = iota
 	Multiply
+	Concat
 )
 
-func hasSolution(result int, nums []int, ops []Operator) []int {
-	var res []int
-	for op := range ops {
-		var a int
-		switch op {
+func findSolutions(result int, nums []int, operators []Operator) []int {
+	var results []int
+	for operator := range operators {
+		var interResult int
+		switch operator {
 		case int(Add):
-			a = result + nums[0]
+			interResult = result + nums[0]
 		case int(Multiply):
-			a = result * nums[0]
+			interResult = result * nums[0]
+		case int(Concat):
+			interResult, _ = strconv.Atoi(strconv.Itoa(result) + strconv.Itoa(nums[0]))
 		}
 
 		if len(nums) > 1 {
-			res = append(res, hasSolution(a, nums[1:], ops)...)
+			results = append(results, findSolutions(interResult, nums[1:], operators)...)
 		} else {
-			res = append(res, a)
+			results = append(results, interResult)
 		}
-
 	}
 
-	return res
-}
-
-func main() {
-	input, error := os.ReadFile("input-real.txt")
-	if error != nil {
-		fmt.Println(error)
-		os.Exit(-1)
-	}
-
-	resultsSum := 0
-	for _, line := range strings.Split(string(input), "\n") {
-
-		eq := parseEquation(line)
-		solutions := hasSolution(eq.numbers[0], eq.numbers[1:], []Operator{Add, Multiply})
-		if slices.Contains(solutions, eq.result) {
-			resultsSum += eq.result
-		}
-
-	}
-
-	fmt.Printf("Sum of possible equations are %d\n", resultsSum)
-
+	return results
 }
