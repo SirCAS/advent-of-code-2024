@@ -1,6 +1,8 @@
 package main
 
-import "strings"
+import (
+	"strings"
+)
 
 type GuardMap struct {
 	data []string
@@ -12,6 +14,13 @@ func (m *GuardMap) isObstacle(pos Coordinate) bool {
 
 func (m *GuardMap) getSize() (int, int) {
 	return len(m.data[0]), len(m.data)
+}
+
+func (m *GuardMap) setObstacle(pos Coordinate) {
+	// golang strings are immutable
+	tmp := []rune(m.data[pos.y])
+	tmp[pos.x] = '#'
+	m.data[pos.y] = string(tmp)
 }
 
 func (m *GuardMap) getGuardPosition() Coordinate {
